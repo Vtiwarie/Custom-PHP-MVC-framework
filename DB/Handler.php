@@ -1,12 +1,13 @@
 <?php
-class DB_Handler
-{
+
+class DB_Handler {
 
     private static $_instance = null;
-    
-    private function __construct() {
 
+    private function __construct() {
+        
     }
+
     private function __clone() {
         ;
     }
@@ -19,7 +20,7 @@ class DB_Handler
 
         return self::$_instance;
     }
-    
-  
+
 }
+
 ?>

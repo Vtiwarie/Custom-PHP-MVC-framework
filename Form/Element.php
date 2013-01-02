@@ -37,18 +37,15 @@ abstract class Form_Element extends Markup_HTML_Element {
         $this->attributes['required'] = (bool) $req;
         return $this;
     }
-    
-    public function getFieldName()
-    {
+
+    public function getFieldName() {
         return $this->fieldName;
     }
 
-    public function setFieldName($fieldName)
-    {
+    public function setFieldName($fieldName) {
         $this->attributes['name'] = $fieldName;
         $this->fieldName = $fieldName;
     }
-    
 
     //Validators
     public function addValidator(Validator $val) {
@@ -67,8 +64,7 @@ abstract class Form_Element extends Markup_HTML_Element {
         foreach ($validators AS $key => $val) {
             if (!($val instanceof Validator)) {
                 throw new Exception("Element {$key} must be a validator");
-            }
-            elseif(!is_int($key))
+            } elseif (!is_int($key))
                 throw new Exception('All keys must be numeric');
         }
 
@@ -76,16 +72,15 @@ abstract class Form_Element extends Markup_HTML_Element {
         return $this;
     }
 
-    public function isValid($fieldValue=null) {
+    public function isValid($fieldValue = null) {
         $this->clearErrorMessages();
-                
+
         //if field name not provided
-        if(!($this->getFieldName()))
-        {
+        if (!($this->getFieldName())) {
             $this->errorMessages[] = 'no field name provided';
             return false;
         }
-                
+
         //get errors from validators if applicable
         foreach ($this->validators AS $val) {
             if (!$val->isValid($fieldValue)) {
@@ -95,7 +90,7 @@ abstract class Form_Element extends Markup_HTML_Element {
                 }
             }
         }
-        
+
         //if field is required
         if (($this->isRequired()) && ($fieldValue == null)) {
             $this->errorMessages[] = $this->getFieldName() . ' is a required field';

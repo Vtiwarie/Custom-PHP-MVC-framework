@@ -13,7 +13,7 @@ class DB extends PDO {
         $stmt->setFetchMode(PDO::FETCH_CLASS, $this->table);
 
         $result = $stmt->fetchAll();
-            
+
 
         return $result;
     }

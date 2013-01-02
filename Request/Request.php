@@ -8,7 +8,7 @@ class Request {
     protected $url;
     protected $params = null;
 
-    public function __construct($url=null) {
+    public function __construct($url = null) {
         $this->url = (isset($url)) ? $url : ($_SERVER['REQUEST_URI']);
 
         $query = explode('&', trim(parse_url($this->url, PHP_URL_QUERY)));

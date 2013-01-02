@@ -10,7 +10,7 @@ class User {
     protected $userType = null;
     protected $dateAdded = null;
     protected $dateModified = null;
-        
+
     //get function properties - __call overloading
     public function __call($name, $arguments) {
         if (substr($name, 0, 3) == 'get') {
@@ -19,9 +19,6 @@ class User {
             return (isset($n[$name])) ? $n[$name] : null;
         }
     }
-
-
-    
 
 }
 

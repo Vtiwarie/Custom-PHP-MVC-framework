@@ -1,16 +1,12 @@
 <?php
 
+class Form_File extends Form_Element {
 
+    public function __toString() {
 
-class Form_File extends Form_Element{
-
-        
-        public function __toString() {
-        
-            return $this->displayElement(parent::FORM_FILE);
+        return $this->displayElement(parent::FORM_FILE);
     }
 
-    
 }
 
 ?>

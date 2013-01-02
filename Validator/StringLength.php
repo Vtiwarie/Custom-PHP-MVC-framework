@@ -5,7 +5,7 @@ class Validator_StringLength extends Validator {
     protected $maxLength;
 
     public function __construct($maxLength) {
-        if(!is_int($maxLength))
+        if (!is_int($maxLength))
             throw new Exception('String Length must be an integer');
         $this->maxLength = $maxLength;
     }

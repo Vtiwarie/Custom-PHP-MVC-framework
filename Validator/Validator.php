@@ -2,11 +2,11 @@
 
 abstract class Validator {
 
-     protected $errors = array();
-     
-     public abstract function getErrors();
+    protected $errors = array();
 
-     public abstract function isValid($fieldValue);
+    public abstract function getErrors();
+
+    public abstract function isValid($fieldValue);
 }
 
 ?>

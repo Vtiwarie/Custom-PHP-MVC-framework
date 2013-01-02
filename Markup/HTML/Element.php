@@ -1,6 +1,5 @@
 <?php
 
-
 abstract class Markup_HTML_Element {
 
     protected $attributes = array();
@@ -14,7 +13,7 @@ abstract class Markup_HTML_Element {
         return $this->attributes[$attr];
     }
 
-    public function setAttrib($attr=null, $value=null) {
+    public function setAttrib($attr = null, $value = null) {
         if ($attr === null || $attr === '') {
             throw new Exception('Field name cannot be blank');
         }
@@ -22,7 +21,7 @@ abstract class Markup_HTML_Element {
         return $this;
     }
 
-    public function setAttribs(Array $attrs=null) {
+    public function setAttribs(Array $attrs = null) {
         if (empty($attrs)) {
             throw new Exception('Field must be a non-empty array');
         }
@@ -34,12 +33,12 @@ abstract class Markup_HTML_Element {
     }
 
     public function getId() {
- 
+
         return (isset($this->attributes['id'])) ? $this->attributes['id'] : -1;
     }
 
-    public function setId($id=null) {
-        if ($id === '' || !isset($id)) 
+    public function setId($id = null) {
+        if ($id === '' || !isset($id))
             throw new Exception('Field \'id\' cannot be empty');
         $this->attributes['id'] = (string) $id;
         return $this;
@@ -49,7 +48,7 @@ abstract class Markup_HTML_Element {
         return (isset($this->attributes['name'])) ? $this->attributes['name'] : -1;
     }
 
-    public function setName($name=null) {
+    public function setName($name = null) {
         if ($name === '' || !isset($name)) {
             throw new Exception('Field \'name\' cannot be empty');
         }
@@ -59,8 +58,6 @@ abstract class Markup_HTML_Element {
 
     //abstract methods
     public abstract function __toString();
-
-
 }
 
 ?>

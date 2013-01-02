@@ -53,7 +53,7 @@ class Auth {
         //check for connection
         $this->checkConnection();
 
-        
+
         //check if a user is alread logged in
         if (isset($_SESSION['auth']) || isset($this->user)) {
             throw new Exception('A user is already logged in');
@@ -61,7 +61,7 @@ class Auth {
 
         $email = trim(htmlentities($email));
         $password = sha1(trim(htmlentities($password)));
-       
+
         $query = 'SELECT id, userName, email, userType, dateAdded, dateModified FROM :table WHERE email=:email AND password=:password';
         $stmt = $this->db->prepare($query);
         $r = $stmt->execute(array(':table' => DB_TABLE_USERS, ':email' => $email, ':password' => $password));
@@ -99,7 +99,6 @@ class Auth {
 
     public function createUser() {
         //check if a user already exists
-   
         //encrypt the password with sha1 or SHA
     }
 
