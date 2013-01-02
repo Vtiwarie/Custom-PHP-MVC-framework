@@ -7,6 +7,7 @@ class Auth {
     protected static $_instance = null;
     protected $user = null;
     protected $db = null;
+    protected $errorMessages;
 
     private function __construct() {
         ;
@@ -60,8 +61,6 @@ class Auth {
 
         $email = trim(htmlentities($email));
         $password = sha1(trim(htmlentities($password)));
-        print_r($email);
-        print_r($password);
        
         $query = 'SELECT id, userName, email, userType, dateAdded, dateModified FROM :table WHERE email=:email AND password=:password';
         $stmt = $this->db->prepare($query);

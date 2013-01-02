@@ -4,6 +4,7 @@ class DB extends PDO {
 
     protected $query;
     protected $table;
+    protected $errorMessages = array();
 
     public function submitQuery() {
 
@@ -12,11 +13,12 @@ class DB extends PDO {
         $stmt->setFetchMode(PDO::FETCH_CLASS, $this->table);
 
         $result = $stmt->fetchAll();
+            
 
         return $result;
     }
 
-    public function select($table, $fields = '*', $where = '1=1', $order = 'id', $limit = '', $desc = false, $limitBegin = 0, $groupby = null, $monitoring = false) {
+    public function select($table, $fields = '*', $where = '1=1', $order = 'id', $limit = '', $desc = false, $limitBegin = 0, $groupby = null) {
         $this->table = ucfirst(substr($table, 0, -1));
         $this->query = 'SELECT ' . $fields . ' FROM ' . $table . ' WHERE ' . $where;
 
