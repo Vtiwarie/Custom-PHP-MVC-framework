@@ -1,13 +1,12 @@
 <?php
 
-require_once('includes/utilities.php');
-
 class Auth {
 
     protected static $_instance = null;
-    protected $user = null;
+    protected static $user = null;
     protected $db = null;
-    protected $errorMessages;
+    protected $encryptionType = 'sha1';
+    protected $requiredFields = array('id', 'userName', 'email', 'userType', 'dateAdded', 'dateModified');
 
     private function __construct() {
         ;
@@ -22,6 +21,9 @@ class Auth {
             self::$_instance = new Auth();
         }
 
+        if (isset($_SESSION['auth']))
+            self::$user = $_SESSION['auth'];
+
         return self::$_instance;
     }
 
@@ -30,7 +32,7 @@ class Auth {
         $this->checkConnection();
     }
 
-    private function checkConnection() {
+    protected function checkConnection() {
         if ($this->db == null) {
             throw new Exception('No connection established');
         }
@@ -38,72 +40,54 @@ class Auth {
 
     //USER AUTHENTICATION
     public function getIdentity() {
-        return $this->user;
+        return (isset(self::$user)) ? self::$user : $_SESSION['auth'];
     }
 
     public function isAdmin() {
-        return (isset($this->user) && ($this->user->getUserType() == 'admin' )) ? true : false;
+        return ($this->getIdentity()->isAdmin());
     }
 
     public function canEditPage($pageId) {
-        return (($this->user->getUserType() == 'admin') || $this->user->getId() == $pageId);
+        return (($this->getIdentity()->isAdmin()) || self::$user->getId() == $pageId);
     }
 
     public function login($email, $password) {
         //check for connection
         $this->checkConnection();
 
-
         //check if a user is alread logged in
-        if (isset($_SESSION['auth']) || isset($this->user)) {
+        if (isset($_SESSION['auth']) || isset(self::$user)) {
             throw new Exception('A user is already logged in');
         }
 
+        $enc = $this->encryptionType;
         $email = trim(htmlentities($email));
-        $password = sha1(trim(htmlentities($password)));
+        $password = $enc(trim(htmlentities($password)));
 
-        $query = 'SELECT id, userName, email, userType, dateAdded, dateModified FROM :table WHERE email=:email AND password=:password';
-        $stmt = $this->db->prepare($query);
-        $r = $stmt->execute(array(':table' => DB_TABLE_USERS, ':email' => $email, ':password' => $password));
+        $where = sprintf("email='%s' AND password='%s'", $email, $password);
+        $result = $this->db->select(DB_TABLE_USERS, implode(', ', $this->requiredFields), $where)->submitQuery();
+        $user = $result[0];
 
-        $stmt->setFetchMode(PDO::FETCH_CLASS, CLASS_USER);
-        $this->user = $stmt->fetch();
-        print_r($this->user);
-
-        if (empty($this->user)) {
-            throw new Exception('user could not be logged in');
+        if (!$user) {
+            self::$user = null;
+            throw new Exception('email and password combination incorrect');
         } else {
-            $_SESSION['auth'] = $this->user;
-            header('Location:index.php');
+            self::$user = $user;
+            $_SESSION['auth'] = self::$user;
+            ;
         }
     }
 
     public function logout() {
-        $this->user = null;
+        self::$user = null;
 
-        $_SESSION['auth'] = null;
+        $_SESSION = null;
 
         session_destroy();
     }
 
-    //CRUD functions
-    public function updateUser() {
-        
-    }
-
-    public function deleteUser() {
-        //delete from database
-        //delete from class
-        $this->user = null;
-    }
-
-    public function createUser() {
-        //check if a user already exists
-        //encrypt the password with sha1 or SHA
-    }
-
-    public function __toString() {
-        
+    public function isLoggedIn() {
+        return isset(self::$user);
     }
 
 }

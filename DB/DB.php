@@ -14,12 +14,36 @@ class DB extends PDO {
 
         $result = $stmt->fetchAll();
 
+        if (empty($result))
+            return false;
 
         return $result;
     }
 
+    public function setTable($table) {
+    
+
+        try {
+            $this->table = (class_exists($table)) ? $table : '';
+            if($this->table !== '')
+                return;
+            
+        } catch (Exception $e) {
+            $this->table = strtolower($table);
+            $this->table = explode('_', $table);
+
+            foreach ($this->table AS &$v)
+                $v = ucfirst($v);
+            $this->table = (implode('_', ($this->table)));
+
+            if ($this->table[strlen($this->table) - 1] == 's')
+                $this->table = substr($this->table, 0, -1);
+        }
+
+    }
+
     public function select($table, $fields = '*', $where = '1=1', $order = 'id', $limit = '', $desc = false, $limitBegin = 0, $groupby = null) {
-        $this->table = ucfirst(substr($table, 0, -1));
+        $this->setTable($table);
         $this->query = 'SELECT ' . $fields . ' FROM ' . $table . ' WHERE ' . $where;
 
         if (!empty($groupby)) {
@@ -43,12 +67,18 @@ class DB extends PDO {
 
     public function insert($table, array $objects) {
         $this->query = 'INSERT INTO ' . $table . ' ( ' . implode(',', array_keys($objects)) . ' ) VALUES(\'' . implode('\',\'', $objects) . '\')';
-        $this->table = ucfirst(substr($table, 0, -1));
+        $this->setTable($table);
+
+        $stmt = $this->query($this->query);
+
+        if ($stmt->rowCount() <= 0)
+            return false;
+
         return $this;
     }
 
     public function update($table, $data, $where) {
-        $this->table = ucfirst(substr($table, 0, -1));
+        $this->setTable($table);
 
         if (is_array($data)) {
             $update = array();
@@ -58,16 +88,33 @@ class DB extends PDO {
 
             $this->query = 'UPDATE ' . $table . ' SET ' . implode(',', $update) . ' WHERE ' . $where;
 
-            return this;
+            $stmt = $this->query($this->query);
+            if ($stmt->rowCount() <= 0)
+                return false;
+
+            return $this;
         }
     }
 
-    public function Delete() {
-        
+    public function Delete($table, $where = 'id=0') {
+        $this->setTable($table);
+
+        $this->query = 'DELETE FROM ' . $table . ' WHERE ' . $where;
+        $stmt = $this->query($this->query);
+        if ($stmt->rowCount() <= 0)
+            return false;
+
+        return $this;
     }
 
-    public function truncate() {
-        
+    public function truncate($table) {
+        $this->query = 'TRUNCATE TABLE ' . $table;
+
+        $stmt = $this->query($this->query);
+        if ($stmt->rowCount() <= 0)
+            return false;
+
+        return $this;
     }
 
 }

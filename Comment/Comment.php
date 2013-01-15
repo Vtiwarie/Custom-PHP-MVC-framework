@@ -1,27 +1,23 @@
 <?php
 
-class User {
+class Comment {
 
     protected $id = null;
-    protected $userName = null;
-    protected $email = null;
-    protected $userType = null;
+    protected $postId = null;
+    protected $userId = null;
+    protected $body = null;
     protected $dateAdded = null;
-    protected $dateModified = null;
 
     //"get" function properties - __call overloading
-    //example: getId(), getUserName()
+    //example: getId(), getPostId()
     public function __call($name, $arguments) {
         if (substr($name, 0, 3) == 'get') {
             $name = lcfirst(str_replace('get', '', $name));
-            $n = get_object_vars(($this));
+            $n = get_class_vars(get_class($this));
             return (isset($n[$name])) ? $n[$name] : null;
         }
     }
 
-    public function isAdmin() {
-        return ($this->userType == 'admin');
-    }
 
 }
 
